@@ -1,0 +1,29 @@
+#!/bin/bash
+ferr(){
+    echo "$@"
+    exit 1
+}
+
+cd ~/.vim/bundle-available-github/YouCompleteMe || ferr "failed to change into checkout"
+
+git checkout master || ferr "failed to switch to master"
+git fetch || ferr "failed to fetch update"
+git clean -fdx || ferr "failed to clean"
+git reset --hard origin/master || ferr "failed to update"
+git clean -fdx || ferr "failed to clean"
+git submodule foreach --recursive git clean -fdx
+git submodule update --init --recursive || ferr "failed to update submodules"
+
+#old
+#./install.py \
+#    --clang-completer \
+#    --rust-completer \
+#    --go-completer
+
+#./install.py --skip-build --no-regex --clangd-completer
+
+./install.py \
+    --clangd-completer \
+    --rust-completer \
+    --go-completer
+

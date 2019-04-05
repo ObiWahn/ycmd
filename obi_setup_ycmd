@@ -1,0 +1,6 @@
+#!/bin/bash
+script_dir="$(dirname "$(readlink -f "${BASH_SOURCE[0]}")")"
+cd "$script_dir" || exit 1
+git clean -fdx
+ln -s "$HOME/.vim/bundle-available-github/YouCompleteMe/third_party/ycmd/"*.so* .
+ln -s "$HOME/.vim/bundle-available-github/YouCompleteMe/third_party/ycmd/third_party/clang/lib/"*.so* .
