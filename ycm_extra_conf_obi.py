@@ -61,10 +61,10 @@ base_system_includes = [
 ] #make sure we get c++ completion
 
 base_toolchain = [
-    u'--gcc-toolchain' '/usr/opt/gcc_trunk_install'
+    u'--gcc-toolchain', u'/usr/opt/gcc_trunk_install'
 ]
 
-if False:
+if True:
     # use with clangd
     base_flags += base_system_includes
 else:
