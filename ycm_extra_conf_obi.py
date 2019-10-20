@@ -45,7 +45,10 @@ use_additional_files=True
 additional_flag_files=[ '.clang_complete' ]
 throw_exceptions = True
 base_flags = [
-    u'-x', u'c++',
+    u'-x', u'c++'
+]
+
+base_system_includes = [
     u'-isystem', u'/usr/local/include/ycmd/0',
     u'-isystem', u'/usr/local/include/ycmd/1',
     u'-isystem', u'/usr/local/include/ycmd/2',
@@ -56,6 +59,17 @@ base_flags = [
     u'-isystem', u'/usr/include/x86_64-linux-gnu',
     u'-isystem', u'/usr/include',
 ] #make sure we get c++ completion
+
+base_toolchain = [
+    u'--gcc-toolchain' '/usr/opt/gcc_trunk_install'
+]
+
+if False:
+    # use with clangd
+    base_flags += base_system_includes
+else:
+    # use with clang
+    base_flags += base_toolchain
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
