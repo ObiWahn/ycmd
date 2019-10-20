@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python3
 # This file is NOT licensed under the GPLv3, which is the license for the rest
 # of YouCompleteMe.
 #
@@ -355,6 +355,11 @@ def Settings( **kwargs ):
       rv['override_filename'] = override_file
 
     return rv
+
+  if language == 'python':
+    return {
+      'interpreter_path': '/usr/bin/python3'
+    }
 
   return {}
 
