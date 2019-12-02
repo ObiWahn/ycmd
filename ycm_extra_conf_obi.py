@@ -41,9 +41,14 @@ from pprint import pformat as PF
 from pprint import pprint as PP
 logging.basicConfig(level=logging.INFO)
 
-use_additional_files=True
-additional_flag_files=[ '.clang_complete' ]
 throw_exceptions = True
+use_additional_files=True
+
+additional_flag_files=[
+    '.clang_complete',
+    os.path.expanduser('~') + os.pathsep + '.ycm_extra_flags'
+]
+
 base_flags = [
     u'-x', u'c++'
 ]
@@ -186,7 +191,11 @@ def find_database(filename):
 def flags_from_additional_files(filename):
         flags = []
         for candidate in additional_flag_files:
-            flag_file = find_closest_path(filename,candidate)
+            flag_file = None
+            if os.path.isabs(candidate) and os.path.exists(candidate):
+                flag_file = candidate
+            else:
+                flag_file = find_closest_path(filename,candidate)
             if flag_file:
                 with open(flag_file) as fh:
                     directory = os.path.dirname(flag_file)
