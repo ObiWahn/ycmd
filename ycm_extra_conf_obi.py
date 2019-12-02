@@ -44,37 +44,14 @@ logging.basicConfig(level=logging.INFO)
 throw_exceptions = True
 use_additional_files=True
 
-additional_flag_files=[
-    '.clang_complete',
-    os.path.expanduser('~') + os.pathsep + '.ycm_extra_flags'
-]
 
 base_flags = [
     u'-x', u'c++'
 ]
 
-base_system_includes = [
-    u'-isystem', u'/usr/local/include/ycmd/0',
-    u'-isystem', u'/usr/local/include/ycmd/1',
-    u'-isystem', u'/usr/local/include/ycmd/2',
-    u'-isystem', u'/usr/local/include/ycmd/3',
-    u'-isystem', u'/usr/local/include',
-    u'-isystem', u'/usr/local/include/ycmd/4',
-    u'-isystem', u'/usr/local/include/ycmd/5',
-    u'-isystem', u'/usr/include/x86_64-linux-gnu',
-    u'-isystem', u'/usr/include',
-] #make sure we get c++ completion
-
-base_toolchain = [
-    u'--gcc-toolchain', u'/usr/opt/gcc_trunk_install'
+base_flags_files=[
+    os.path.expanduser('~') + os.path.sep + '.ycm_base_flags'
 ]
-
-if True:
-    # use with clangd
-    base_flags += base_system_includes
-else:
-    # use with clang
-    base_flags += base_toolchain
 
 # These are the compilation flags that will be used in case there's no
 # compilation database set (by default, one is not set).
@@ -88,13 +65,16 @@ fallback_flags = [
     u'-Wno-variadic-macros',
     u'-fexceptions',
     u'-ferror-limit=10000',
-    u'-I', '/home/oberon/repos/extcpp/include',
     u'-DNDEBUG',
+]
+fallback_flags_files=[
+    '.clang_complete',
+    '.ycm_fallback_flags',
+    os.path.expanduser('~') + os.path.sep + '.ycm_fallback_flags'
 ]
 
 source_ext = [ '.cpp', '.cxx', '.cc', '.c', '.m', '.mm' ]
 header_ext = [ '.hpp', '.hxx', '.hh', '.h' ]
-
 
 class FakeInfo(object):
     def __init__(self):
@@ -188,21 +168,33 @@ def find_database(filename):
         return None, None
     return compilation_db, source_path
 
-def flags_from_additional_files(filename):
+def flags_from_file(flags_file_candidate, source_file):
+    flag_file = None
+    logging.info("trying extra file: {}".format(flags_file_candidate))
+    if os.path.isabs(flags_file_candidate) and os.path.exists(flags_file_candidate):
+        flag_file = flags_file_candidate
+    else:
+        flag_file = find_closest_path(source_file, flags_file_candidate)
+
+    if not flag_file:
+        return []
+
+    with open(flag_file) as fh:
+        logging.info("adding flags form {}".format(flag_file))
+        directory = os.path.dirname(flag_file)
+        new_flags = []
+        for line in fh:
+            new_flags.append(line.strip())
+
+    if source_file:
+        return make_relative_flags_to_absolute(new_flags, directory)
+    else:
+        return new_flags
+
+def flags_from_file_list(file_list, source_file):
         flags = []
-        for candidate in additional_flag_files:
-            flag_file = None
-            if os.path.isabs(candidate) and os.path.exists(candidate):
-                flag_file = candidate
-            else:
-                flag_file = find_closest_path(filename,candidate)
-            if flag_file:
-                with open(flag_file) as fh:
-                    directory = os.path.dirname(flag_file)
-                    new_flags = []
-                    for line in fh:
-                        new_flags.append(line.strip())
-                flags += make_relative_flags_to_absolute(new_flags, directory)
+        for candidate in file_list:
+            flags += flags_from_file(candidate, source_file)
         return flags
 
 ## finding stuff - end
@@ -344,15 +336,21 @@ def Settings( **kwargs ):
         #TODO fix me
         source_dir = 'something something'
 
-    if not final_flags and use_additional_files:
-        logging.warning("inspecting addintional files for flags")
-        final_flags = flags_from_additional_files(filename)
+    db_used = True
+    if not final_flags:
+        db_used = False
+        final_flags = []
 
-    if not final_flags: #database not there or does not contain the file
+    if not db_used and use_additional_files:
+        logging.warning("checking addional files")
+        final_flags += flags_from_file_list(fallback_flags_files, filename)
+
+    if not db_used:
         logging.warning("using fallback strategy to get flags")
-        final_flags = fallback_flags
+        final_flags += fallback_flags
         final_flags += flags_for_closest_include(filename)
 
+    final_flags += flags_from_file_list(base_flags_files, None) #use this for tool-chaing etc
     final_flags += base_flags
 
     rv = {
