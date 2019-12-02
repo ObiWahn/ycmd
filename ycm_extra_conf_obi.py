@@ -184,7 +184,9 @@ def flags_from_file(flags_file_candidate, source_file):
         directory = os.path.dirname(flag_file)
         new_flags = []
         for line in fh:
-            new_flags.append(line.strip())
+            if not line.startswith("#"):
+                logging.debug("adding flags {}".format(line.strip()))
+                new_flags.append(line.strip())
 
     if source_file:
         return make_relative_flags_to_absolute(new_flags, directory)
