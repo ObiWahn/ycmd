@@ -4,16 +4,23 @@ ferr(){
     exit 1
 }
 
-cd ~/.vim/bundle-available-github/YouCompleteMe || ferr "failed to change into checkout"
+# update script that tends to fail because of broken submodules
+#cd ~/.vim/bundle-available-github/YouCompleteMe || ferr "failed to change into checkout"
+#git checkout master || ferr "failed to switch to master"
+#git fetch || ferr "failed to fetch update"
+#git clean -fdx || ferr "failed to clean"
+#git reset --hard origin/master || ferr "failed to update"
+#git clean -fdx || ferr "failed to clean"
+#git submodule foreach --recursive git clean -fdx
+#git submodule sync --recursive
+#git submodule update --init --recursive || ferr "failed to update submodules"
+#git submodule update --init --recursive || ferr "failed to update submodules"
 
-git checkout master || ferr "failed to switch to master"
-git fetch || ferr "failed to fetch update"
-git clean -fdx || ferr "failed to clean"
-git reset --hard origin/master || ferr "failed to update"
-git clean -fdx || ferr "failed to clean"
-git submodule foreach --recursive git clean -fdx
-git submodule sync --recursive
-git submodule update --init --recursive || ferr "failed to update submodules"
+cd ~/.vim/bundle-available-github || ferr "failed to change into checkout"
+rm -fr YouCompleteMe || ferr "failed to delete"
+git clone https://github.com/ycm-core/YouCompleteMe || ferr "failed to clone"
+cd YouCompleteMe || ferr "can not change in dir"
+git submodule init || ferr "failed to init submodule"
 git submodule update --init --recursive || ferr "failed to update submodules"
 
 #old
@@ -28,4 +35,3 @@ git submodule update --init --recursive || ferr "failed to update submodules"
 #    --clangd-completer \
 #    --rust-completer \
 #    --go-completer
-
