@@ -32,6 +32,7 @@
 from distutils.sysconfig import get_python_inc
 import platform
 import os
+import io
 import ycm_core
 
 import fnmatch
@@ -150,7 +151,8 @@ def flags_for_closest_include(filename):
         include_path = find_closest_path(filename, 'include')
         if include_path:
             logging.info("found include dir")
-            flags.append( "-I" + include_path )
+            flags.append("-I")
+            flags.append(include_path)
         else:
             logging.info("no include dir found")
         return flags
@@ -179,14 +181,14 @@ def flags_from_file(flags_file_candidate, source_file):
     if not flag_file:
         return []
 
-    with open(flag_file) as fh:
-        logging.info("adding flags form {}".format(flag_file))
+    with io.open(flag_file, mode="r", encoding="utf-8") as fh:
+        logging.info("adding flags from {}".format(flag_file))
         directory = os.path.dirname(flag_file)
         new_flags = []
         for line in fh:
             if not line.startswith("#"):
-                logging.debug("adding flags {}".format(line.strip()))
-                new_flags.append(line.strip())
+                logging.debug("adding flag {}".format(line.rstrip()))
+                new_flags.append(line.rstrip())
 
     if source_file:
         return make_relative_flags_to_absolute(new_flags, directory)
@@ -196,7 +198,10 @@ def flags_from_file(flags_file_candidate, source_file):
 def flags_from_file_list(file_list, source_file):
         flags = []
         for candidate in file_list:
-            flags += flags_from_file(candidate, source_file)
+            new_falgs = flags_from_file(candidate, source_file)
+            if new_falgs:
+                flags += new_falgs
+                logging.info("adding {} from file {}".format(str(new_falgs), candidate))
         return flags
 
 ## finding stuff - end
@@ -352,8 +357,8 @@ def Settings( **kwargs ):
         final_flags += fallback_flags
         final_flags += flags_for_closest_include(filename)
 
-    final_flags += flags_from_file_list(base_flags_files, None) #use this for tool-chaing etc
-    final_flags += base_flags
+    final_flags = flags_from_file_list(base_flags_files, None) + final_flags #use this for tool-chaing etc
+    final_flags = base_flags + final_flags
 
     rv = {
       'flags': final_flags,
