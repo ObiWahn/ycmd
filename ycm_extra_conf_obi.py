@@ -272,10 +272,6 @@ def get_flags_from_compilation_database(database, filename):
 
     logging.info("found CompilationInfo for : " + filename)
     logging.debug("dir" + PF(dir(compilation_info)))
-    #logging.debug("vars" + PF(vars(compilation_info)))
-    #logging.debug("__dict__" + PF(compilation_info.__dict__))
-    logging.debug("dir" + PF(compilation_info.compiler_flags_))
-    logging.debug("flags: " + string_vector_to_str(compilation_info.compiler_flags_))
     logging.debug("workingdir:" + str(compilation_info.compiler_working_dir_))
     logging.debug("flags: " + string_vector_to_str(compilation_info.compiler_flags_))
 
