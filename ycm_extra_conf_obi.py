@@ -1,4 +1,5 @@
-#!/usr/bin/python
+#!/usr/bin/env python3
+
 # This file is NOT licensed under the GPLv3, which is the license for the rest
 # of YouCompleteMe.
 #
@@ -33,7 +34,6 @@ from distutils.sysconfig import get_python_inc
 import platform
 import os
 import io
-import ycm_core
 
 import fnmatch
 import logging
@@ -158,6 +158,9 @@ def flags_for_closest_include(filename):
         return flags
 
 def find_database(filename):
+    # Do NOT import ycm_core at module scope.
+    import ycm_core
+
     compilation_db_path , source_path = find_closest_db(filename, 'compile_commands.json')
     if not compilation_db_path:
         return None, None
