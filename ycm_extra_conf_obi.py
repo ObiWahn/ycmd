@@ -51,7 +51,7 @@ base_flags = [
 ]
 
 base_flags_files=[
-    os.path.expanduser('~') + os.path.sep + '.ycm_base_flags'
+    os.path.expanduser('~') + os.path.sep + '.obi-config' + os.path.sep + 'ycm_base_flags'
 ]
 
 # These are the compilation flags that will be used in case there's no
@@ -71,7 +71,7 @@ fallback_flags = [
 fallback_flags_files=[
     '.clang_complete',
     '.ycm_fallback_flags',
-    os.path.expanduser('~') + os.path.sep + '.ycm_fallback_flags'
+    os.path.expanduser('~') + os.path.sep + '.obi-config' + os.path.sep + 'ycm_fallback_flags'
 ]
 
 source_ext = [ '.cpp', '.cxx', '.cc', '.c', '.m', '.mm' ]
