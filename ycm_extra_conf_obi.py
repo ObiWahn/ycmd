@@ -47,10 +47,11 @@ use_additional_files=True
 
 
 base_flags = [
-    u'-x', u'c++'
+#    u'-x', u'c++'
 ]
 
 base_flags_files=[
+    '.ycm_base_flags',
     os.path.expanduser('~') + os.path.sep + '.obi-config' + os.path.sep + 'ycm_base_flags'
 ]
 
@@ -58,15 +59,15 @@ base_flags_files=[
 # compilation database set (by default, one is not set).
 # CHANGE THIS LIST OF FLAGS. YES, THIS IS THE DROID YOU HAVE BEEN LOOKING FOR.
 fallback_flags = [
-    u'-std=c++17',
-    u'-Wall',
-    u'-Wextra',
-    u'-Werror',
-    u'-Wno-long-long',
-    u'-Wno-variadic-macros',
-    u'-fexceptions',
-    u'-ferror-limit=10000',
-    u'-DNDEBUG',
+#    u'-std=c++17',
+#    u'-Wall',
+#    u'-Wextra',
+#    u'-Werror',
+#    u'-Wno-long-long',
+#    u'-Wno-variadic-macros',
+#    u'-fexceptions',
+#    u'-ferror-limit=10000',
+#    u'-DNDEBUG',
 ]
 fallback_flags_files=[
     '.clang_complete',
@@ -115,6 +116,7 @@ class FakeInfo(object):
 
 ## finding stuff
 def find_closest_path(path, target):
+    logging.info("find_closest_path: path {0}, target {1}".format(path, target))
     candidate = os.path.join(path, target)
     if(os.path.isfile(candidate) or os.path.isdir(candidate)):
         logging.info("closest " + target + " at " + candidate)
@@ -201,10 +203,11 @@ def flags_from_file(flags_file_candidate, source_file):
 def flags_from_file_list(file_list, source_file):
         flags = []
         for candidate in file_list:
-            new_falgs = flags_from_file(candidate, source_file)
-            if new_falgs:
-                flags += new_falgs
-                logging.info("adding {} from file {}".format(str(new_falgs), candidate))
+            new_flags = flags_from_file(candidate, source_file)
+            if new_flags:
+                flags += new_flags
+                logging.info("adding {} from file {}".format(str(new_flags), candidate))
+                return flags
         return flags
 
 ## finding stuff - end
@@ -356,7 +359,7 @@ def Settings( **kwargs ):
         final_flags += fallback_flags
         final_flags += flags_for_closest_include(filename)
 
-    final_flags = flags_from_file_list(base_flags_files, None) + final_flags #use this for tool-chaing etc
+    final_flags = flags_from_file_list(base_flags_files, filename) + final_flags #use this for tool-chaing etc
     final_flags = base_flags + final_flags
 
     rv = {
