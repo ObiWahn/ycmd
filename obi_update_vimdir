@@ -16,7 +16,7 @@ ferr(){
 #git submodule update --init --recursive || ferr "failed to update submodules"
 #git submodule update --init --recursive || ferr "failed to update submodules"
 
-cd ~/.vim/bundle-available-github || ferr "failed to change into checkout"
+cd ~/.vim/pack/plugins/bundle-available-github || ferr "failed to change into checkout"
 rm -fr YouCompleteMe || ferr "failed to delete"
 git clone https://github.com/ycm-core/YouCompleteMe || ferr "failed to clone"
 cd YouCompleteMe || ferr "can not change in dir"
