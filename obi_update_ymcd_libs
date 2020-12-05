@@ -26,6 +26,7 @@ git submodule update --init --recursive || ferr "failed to update submodules"
 #old
 ./install.py \
     --clang-completer \
+    --clangd-completer \
     --rust-completer \
     --go-completer \
     --ts-completer
@@ -33,6 +34,5 @@ git submodule update --init --recursive || ferr "failed to update submodules"
 #./install.py --skip-build --no-regex --clangd-completer
 
 #./install.py \
-#    --clangd-completer \
 #    --rust-completer \
 #    --go-completer
