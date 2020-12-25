@@ -17,7 +17,9 @@ ferr(){
 #git submodule update --init --recursive || ferr "failed to update submodules"
 
 cd ~/.vim/pack/plugins/bundle-available-github || ferr "failed to change into checkout"
+find YouCompleteMe -exec chmod u+w '{}' \; # fix perms so third party go stuff can be deleted
 rm -fr YouCompleteMe || ferr "failed to delete"
+
 git clone https://github.com/ycm-core/YouCompleteMe || ferr "failed to clone"
 cd YouCompleteMe || ferr "can not change in dir"
 git submodule init || ferr "failed to init submodule"
@@ -30,9 +32,3 @@ git submodule update --init --recursive || ferr "failed to update submodules"
     --rust-completer \
     --go-completer \
     --ts-completer
-
-#./install.py --skip-build --no-regex --clangd-completer
-
-#./install.py \
-#    --rust-completer \
-#    --go-completer
